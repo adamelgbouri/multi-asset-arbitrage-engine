@@ -1,0 +1,230 @@
+\documentclass[12pt]{article}
+
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{Multi-Asset Arbitrage Strategy Framework in Excel\\
+Stocks, Commodities and Currencies}
+\author{Adam El Gbouri}
+\date{January 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Project Overview}
+
+This project consists of the development of a multi-asset arbitrage detection framework implemented in Excel. The model covers three asset classes:
+
+\begin{itemize}
+    \item Equities (Stock index or single stock futures)
+    \item Commodities
+    \item Foreign Exchange (FX forwards)
+\end{itemize}
+
+For each asset class, the model:
+
+\begin{itemize}
+    \item Computes the theoretical forward or futures price
+    \item Measures mispricing relative to the observed market price
+    \item Determines whether an arbitrage opportunity exists
+    \item Automatically generates the appropriate trading strategy
+    \item Computes the associated profit and loss (PnL)
+\end{itemize}
+
+All arbitrage decisions are determined dynamically from the sign of the mispricing variable.
+
+\section{General Arbitrage Logic}
+
+For each asset class, mispricing is defined as:
+
+\[
+\text{Mispricing} = F_{\text{market}} - F_{\text{theoretical}}
+\]
+
+The trading strategy is entirely driven by the sign of this value:
+
+\begin{itemize}
+    \item If mispricing $> 0$: the contract is overpriced
+    \item If mispricing $< 0$: the contract is underpriced
+    \item If mispricing $= 0$: no arbitrage opportunity
+\end{itemize}
+
+The PnL corresponds to the theoretical risk-free gain obtained by implementing the strategy until maturity.
+
+\section{Equity Arbitrage (Cash-and-Carry Framework)}
+
+\subsection*{Theoretical Pricing}
+
+For equities paying a continuous dividend yield:
+
+\[
+F_0 = S_0 e^{(r - q)T}
+\]
+
+where:
+
+\begin{itemize}
+    \item $S_0$ is the spot price
+    \item $r$ is the risk-free rate
+    \item $q$ is the dividend yield
+    \item $T$ is time to maturity
+\end{itemize}
+
+\subsection*{Arbitrage Strategies}
+
+\textbf{If mispricing $> 0$ (Future Overpriced):}
+
+\begin{itemize}
+    \item Buy the Spot (or ETF)
+    \item Sell the Future
+    \item Hold until maturity
+    \item Deliver spot / settle the future
+\end{itemize}
+
+\textbf{If mispricing $< 0$ (Future Underpriced):}
+
+\begin{itemize}
+    \item Short the Spot (or ETF)
+    \item Buy the Future
+    \item Hold until maturity
+\end{itemize}
+
+\textbf{If mispricing $= 0$:}
+
+\begin{itemize}
+    \item No arbitrage possible
+\end{itemize}
+
+\section{Commodity Arbitrage (Cost-of-Carry Model)}
+
+\subsection*{Theoretical Pricing}
+
+For commodities:
+
+\[
+F_0 = S_0 e^{(r + u - y)T}
+\]
+
+where:
+
+\begin{itemize}
+    \item $u$ represents storage, insurance, financing and transport costs
+    \item $y$ represents convenience yield
+\end{itemize}
+
+In the model:
+
+\begin{itemize}
+    \item Cost of carry is computed dynamically
+    \item Convenience yield is derived via an Excel formula
+\end{itemize}
+
+\subsection*{Arbitrage Strategies}
+
+\textbf{If mispricing $> 0$ (Future Overpriced):}
+
+\begin{itemize}
+    \item Buy the physical commodity
+    \item Pay storage + insurance + financing + transport
+    \item Sell the Future
+    \item Deliver at maturity
+\end{itemize}
+
+\textbf{If mispricing $< 0$ (Future Underpriced):}
+
+\begin{itemize}
+    \item Short the physical commodity
+    \item Buy the Future
+\end{itemize}
+
+\textbf{If mispricing $= 0$:}
+
+\begin{itemize}
+    \item No arbitrage possible
+\end{itemize}
+
+\section{Foreign Exchange Arbitrage (Covered Interest Arbitrage)}
+
+\subsection*{Theoretical Pricing}
+
+Under Covered Interest Parity (CIP):
+
+\[
+F_0 = S_0 e^{(r_d - r_f)T}
+\]
+
+where:
+
+\begin{itemize}
+    \item $r_d$ is the domestic interest rate
+    \item $r_f$ is the foreign interest rate
+\end{itemize}
+
+\subsection*{Arbitrage Strategies}
+
+\textbf{If mispricing $> 0$ (Forward Overpriced):}
+
+\begin{itemize}
+    \item Borrow foreign currency
+    \item Convert to domestic currency (spot)
+    \item Invest domestically
+    \item Sell the forward to lock future conversion
+\end{itemize}
+
+\textbf{If mispricing $< 0$ (Forward Underpriced):}
+
+\begin{itemize}
+    \item Borrow domestic currency
+    \item Convert to foreign currency
+    \item Invest abroad
+    \item Buy the forward
+\end{itemize}
+
+\textbf{If mispricing $= 0$:}
+
+\begin{itemize}
+    \item No arbitrage possible
+\end{itemize}
+
+\section{Model Structure}
+
+Each asset class has its own dedicated input structure:
+
+\begin{itemize}
+    \item Maturity in years is calculated via Excel formulas
+    \item For commodities, cost of carry and convenience yield are dynamically computed
+    \item Strategy generation is handled via conditional logic based on the mispricing cell
+\end{itemize}
+
+The arbitrage strategy is therefore fully automated and consistent with no-arbitrage pricing theory.
+
+\section{Potential Extensions}
+
+The framework can be extended by:
+
+\begin{itemize}
+    \item Integrating live market data feeds (Bloomberg, Refinitiv, APIs)
+    \item Including transaction costs and funding spreads
+    \item Adding capital allocation constraints
+    \item Implementing margin and liquidity considerations
+    \item Building a real-time arbitrage monitoring dashboard
+    \item Automating asset selection through VBA UserForms
+\end{itemize}
+
+\section{Conclusion}
+
+This project implements a unified arbitrage detection engine across equities, commodities, and FX markets. It combines theoretical pricing models with automated strategy generation and direct PnL estimation.
+
+The framework demonstrates practical application of:
+
+\begin{itemize}
+    \item Cash-and-Carry and Reverse Cash-and-Carry
+    \item Cost-of-Carry pricing
+    \item Covered Interest Arbitrage
+\end{itemize}
+
+It provides a structured approach to identifying and quantifying cross-asset arbitrage opportunities.
+
+\end{document}
